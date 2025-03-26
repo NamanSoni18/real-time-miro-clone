@@ -1,39 +1,84 @@
 "use client";
 
-import { useOrganization } from "@clerk/nextjs";
-import { useSearchParams } from "next/navigation";
+import { useQuery } from "convex/react";
 import { EmptyBoards } from "./empty-boards";
 import { EmptyFavorites } from "./empty-favorites";
 import { EmptySearch } from "./empty-search";
-import { EmptyOrg } from "./empty-org";
+import { api } from "@/convex/_generated/api";
+import { BoardCard } from "./board-card";
+import { NewBoardButton } from "./new-board-button";
+import { Id } from "@/convex/_generated/dataModel";
 
-export const BoardList = () => {
-  const { organization } = useOrganization();
-  const searchParams = useSearchParams();
-  const data = []; // TODO: Change to API Call
+interface Board {
+  _id: Id<"boards">;
+  _creationTime: number;
+  orgId: string;
+  title: string;
+  authorId: string;
+  authorName: string;
+  imageUrl: string;
+  isFavorite: boolean;
+}
 
-  if (!organization) {
-    return <EmptyOrg />;
+interface BoardListProps {
+  orgId: string;
+  search?: string;
+  favorites?: string;
+}
+
+export const BoardList = ({ orgId, search, favorites }: BoardListProps) => {
+  const data = useQuery(api.board.get, { 
+    orgId,
+    search,
+    favorites
+  });
+
+  if (data === undefined) {
+    return (
+      <div>
+        <h2 className="text-3xl">
+          {favorites ? "Favorite boards" : "Team boards"}
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
+          <NewBoardButton orgId={orgId} disabled />
+          {[...Array(5)].map((_, i) => (
+            <BoardCard.Skeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
-  if (!data?.length && searchParams.get("search")) {
-    return <EmptySearch />;
-  }
+  // Filter out any null values and type assert as Board[]
+  const boards = (data?.filter(Boolean) as Board[]) || [];
 
-  if (!data.length && searchParams.get("favorites")) {
-    return <EmptyFavorites />;
-  }
-
-  if (!data.length) {
+  if (boards.length === 0) {
+    if (search) return <EmptySearch />;
+    if (favorites) return <EmptyFavorites />;
     return <EmptyBoards />;
   }
 
   return (
     <div>
-      {JSON.stringify({
-        search: searchParams.get("search"),
-        favorites: searchParams.get("favorites")
-      })}
+      <h2 className="text-3xl">
+        {favorites ? "Favorite boards" : "Team boards"}
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
+        <NewBoardButton orgId={orgId} />
+        {boards.map((board) => (
+          <BoardCard
+            key={board._id}
+            id={board._id}
+            title={board.title}
+            imageUrl={board.imageUrl}
+            authorId={board.authorId}
+            authorName={board.authorName}
+            createdAt={board._creationTime}
+            orgId={board.orgId}
+            isFavorite={board.isFavorite}
+          />
+        ))}
+      </div>
     </div>
   );
 };
