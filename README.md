@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 Real-Time Collaborative Whiteboard (Miro Clone)
 
-## Getting Started
+A feature-rich collaborative whiteboard built with Next.js 15, Liveblocks, and Convex that supports real-time multi-user editing with complete toolset.
 
-First, run the development server:
+## ✨ Features
 
+### 🛠️ Core Functionality
+- **Real-time collaboration** 👥  
+  - Live cursors for all participants
+  - Instant syncing across devices
+- **Complete drawing toolkit** 🎨
+  - Text tool with formatting
+  - Shapes (Rectangle, Circle, Triangle)
+  - Sticky notes with color options
+  - Freehand pencil drawing
+  - Layer management system
+- **Productivity features** ⚡
+  - Unlimited undo/redo history
+  - Keyboard shortcuts
+  - Optimized rendering engine
+
+### 🔐 Workspace Management
+- Organization/team support
+- Secure authentication
+- Invite system
+- Favorites system
+
+## 🚀 Tech Stack
+
+### Frontend
+- Next.js 15 (App Router)
+- React 19 (with Server Components)
+- TypeScript
+- TailwindCSS + ShadcnUI components
+
+### Backend & State
+- Convex (Real-time database)
+- Liveblocks (Collaboration infrastructure)
+- Clerk (Authentication)
+
+### Development Tools
+- ESLint + Prettier
+- Husky git hooks
+
+## 🏗️ Project Structure
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+real-time-miro-clone/
+├── app/
+│   ├── (dashboard)/          # Protected routes
+│   │   ├── _components/
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   ├── api/
+│   │   └── liveblocks-auth/  # Liveblocks auth endpoint
+│   └── layout.tsx
+├── convex/
+│   ├── board.ts              # Board mutations/queries
+│   └── schema.ts             # Database schema
+├── public/                   # Assets
+└── providers/
+    └── convex-client-provider.tsx
+    └── modal-provider.tsx
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# 1. Clone the repository
+git clone https://github.com/yourusername/miro-clone.git
+cd miro-clone
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 2. Install dependencies
+npm install
 
-## Learn More
+# 3. Set up environment variables
+cp .env.example .env.local
+# Fill in your keys from:
+CONVEX_DEPLOYMENT=your_convex_dev_key
+NEXT_PUBLIC_CONVEX_URL=your_convex_url
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+LIVEBLOCKS_SECRET_KEY=your_liveblock_secret_key
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 4. Run the Convex Server
+npx convex dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# 5. Run development Server
+npm run dev
+```
